@@ -8,7 +8,7 @@
         <div class="text-danger text-center">
             <?= $login_error?>
         </div>
-        <form action="<?= base_url('index.php/auth/login')?>" method="post">
+        <form action="<?= base_url('auth/login')?>" method="post">
             <?php echo form_error('identity')?>
             <div class="form-group has-feedback">
                 <input type="email" class="form-control" placeholder="Email" name="identity">

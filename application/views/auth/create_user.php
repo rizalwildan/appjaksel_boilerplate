@@ -1,46 +1,88 @@
-<h1><?php echo lang('create_user_heading');?></h1>
-<p><?php echo lang('create_user_subheading');?></p>
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+?>
 
-<div id="infoMessage"><?php echo $message;?></div>
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-md-8" style="float: none; margin: 0 auto;">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Create User</h3>
+                    </div>
+                    <form action="<?= base_url(uri_string())?>" method="post">
+                        <div class="box-body">
+                            <div class="text-danger">
+                                <?php echo form_error('username')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Username</label>
+                                <input type="text" name="username" placeholder="username" class="form-control">
+                            </div>
+                            <div class="text-danger">
+                                <?php echo form_error('email')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Email</label>
+                                <input type="email" name="email" placeholder="email" class="form-control">
+                            </div>
+                            <div class="text-danger">
+                                <?php echo form_error('first_name')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">First Name</label>
+                                <input type="text" placeholder="First Name" name="first_name" class="form-control">
+                            </div>
+                            <div class="text-danger">
+                                <?php echo form_error('last_name')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Last Name</label>
+                                <input type="text" placeholder="Last Name" name="last_name" class="form-control">
+                            </div>
+                            <div class="text-danger">
+                                <?php echo form_error('phone')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Phone</label>
+                                <input type="number" placeholder="Phone" name="phone" class="form-control">
+                            </div>
+                            <div class="text-danger">
+                                <?php echo form_error('password')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Password</label>
+                                <input type="password" placeholder="Password" name="password" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Password Confirm</label>
+                                <input type="password" placeholder="Confirm Password" name="password_confirm" class="form-control">
+                            </div>
 
-<?php echo form_open("auth/create_user");?>
+                            <div class="text-danger">
+                                <?php echo form_error('groups')?>
+                            </div>
+                            <?php if ($this->ion_auth->is_admin()):?>
+                                <h4 class="title">User Group</h4>
+                                <?php
+                                foreach ($groups as $group): ?>
 
-      <p>
-            <?php echo lang('create_user_fname_label', 'first_name');?> <br />
-            <?php echo form_input($first_name);?>
-      </p>
+                                    <div class="checkbox">
+                                        <label for="">
+                                            <input type="checkbox" name="groups[]" value="<?= $group['id']?>">
+                                            <?= $group['name']?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; endif;?>
+                        </div>
+                        <?php echo  form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash());  ?>
 
-      <p>
-            <?php echo lang('create_user_lname_label', 'last_name');?> <br />
-            <?php echo form_input($last_name);?>
-      </p>
-
-      <p>
-            <?php echo lang('create_user_company_label', 'company');?> <br />
-            <?php echo form_input($company);?>
-      </p>
-
-      <p>
-            <?php echo lang('create_user_email_label', 'email');?> <br />
-            <?php echo form_input($email);?>
-      </p>
-
-      <p>
-            <?php echo lang('create_user_phone_label', 'phone');?> <br />
-            <?php echo form_input($phone);?>
-      </p>
-
-      <p>
-            <?php echo lang('create_user_password_label', 'password');?> <br />
-            <?php echo form_input($password);?>
-      </p>
-
-      <p>
-            <?php echo lang('create_user_password_confirm_label', 'password_confirm');?> <br />
-            <?php echo form_input($password_confirm);?>
-      </p>
-
-
-      <p><?php echo form_submit('submit', lang('create_user_submit_btn'));?></p>
-
-<?php echo form_close();?>
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary btn-flat">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

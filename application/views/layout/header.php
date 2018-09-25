@@ -23,10 +23,10 @@
                         </li>
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="<?= base_url('dashboard/user/edit/'.$this->session->userdata('user_id'))?>" class="btn btn-default btn-flat">Profile</a>
+                                <a href="<?= base_url('Dashboard/User/edit/'.$this->session->userdata('user_id'))?>" class="btn btn-default btn-flat">Profile</a>
                             </div>
                             <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                <a href="<?= base_url('Auth/logout')?>" class="btn btn-default btn-flat">Sign out</a>
                             </div>
                         </li>
                     </ul>
