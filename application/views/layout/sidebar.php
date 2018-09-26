@@ -17,8 +17,8 @@
                     <li class="<?= ($this->uri->segment(2) == 'User') ? 'active' : ''?>">
                         <a href="<?= base_url('Dashboard/User/index')?>"><i class="fa fa-circle-o"></i> Users</a>
                     </li>
-                    <li>
-                        <a href="#"><i class="fa fa-circle-o"></i> Groups</a>
+                    <li class="<?= ($this->uri->segment(2) == 'Group') ? 'active' : ''?>">
+                        <a href="<?= base_url('Dashboard/Group/index')?>"><i class="fa fa-circle-o"></i> Groups</a>
                     </li>
                 </ul>
             </li>
