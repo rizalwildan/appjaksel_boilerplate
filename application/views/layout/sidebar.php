@@ -12,7 +12,7 @@
                         <a href="#"><i class="fa fa-circle-o"></i> Absensi</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-circle-o"></i> Mesin Finger Print</a>
+                        <a href="<?= base_url('Dashboard/Fingerprint/index')?>"><i class="fa fa-circle-o"></i> Mesin Finger Print</a>
                     </li>
                     <li class="<?= ($this->uri->segment(2) == 'User') ? 'active' : ''?>">
                         <a href="<?= base_url('Dashboard/User/index')?>"><i class="fa fa-circle-o"></i> Users</a>
