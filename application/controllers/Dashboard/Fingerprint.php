@@ -15,6 +15,7 @@ class Fingerprint extends CI_Controller
         $this->load->library('ion_auth');
         $this->lang->load('auth');
         $this->load->helper('language');
+        $this->load->model('Fingerprint_model', 'FingerPrint');
         $this->_init();
     }
 
@@ -54,7 +55,8 @@ class Fingerprint extends CI_Controller
             $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
             //list the users
-            $this->data['fingerprint'] = $this->db->get('mesin_fingerprint')->result();
+            $this->data['fingerprint'] = $this->FingerPrint->find()->get()->result_array();
+
             $this->load->view('page/fingerprint/index', $this->data);
         }
     }
@@ -63,12 +65,29 @@ class Fingerprint extends CI_Controller
         {
             redirect('auth', 'refresh');
         }
-        if(isset($_POST) && !empty($_POST)){
-            $insert = $this->db->insert("mesin_fingerprint", $this->input->post());
+
+        //Validation rule
+        $this->form_validation->set_rules('nama_fingerprint', 'Nama mesin', 'required|xss_clean');
+        $this->form_validation->set_rules('ip_address', 'IP Address', 'required|xss_clean');
+
+        if ($this->form_validation->run() == TRUE) {
+
+            $data = array(
+                'nama_fingerprint' => $this->input->post('nama_fingerprint'),
+                'ip_address' => $this->input->post('ip_address'),
+                'status' => 1
+            );
+
+            $insert = $this->FingerPrint->insert($data);
+
+            $this->session->set_flashdata('message', 'Create mesin success');
+
             if($insert) redirect("Dashboard/Fingerprint/index", "refresh");
+
+        } else {
+                $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
         }
 
-        $this->data['fingerprint'] = $this->db->get('mesin_fingerprint')->result();
         $this->load->view('page/fingerprint/add_fingerprint', $this->data);
     }
 
@@ -77,11 +96,32 @@ class Fingerprint extends CI_Controller
         {
             redirect('auth', 'refresh');
         }
-        if(isset($_POST) && !empty($_POST)){
-            $update = $this->db->update("mesin_fingerprint", $this->input->post(), "id_fingerprint = '$id'");
+
+        //Validation rule
+        $this->form_validation->set_rules('nama_fingerprint', 'Nama mesin', 'required|xss_clean');
+        $this->form_validation->set_rules('ip_address', 'IP Address', 'required|xss_clean');
+
+        $condition = array('id_fingerprint' => $id);
+
+        if ($this->form_validation->run() == TRUE) {
+
+            $data = array(
+                'nama_fingerprint' => $this->input->post('nama_fingerprint'),
+                'ip_address' => $this->input->post('ip_address')
+            );
+
+            $this->FingerPrint->find()->where($condition);
+            $update = $this->FingerPrint->update($data);
+
+            $this->session->set_flashdata('message', 'Update mesin success');
+
             if($update) redirect("Dashboard/Fingerprint/index", "refresh");
+        } else {
+            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
         }
-        $this->data['fingerprint'] = $this->db->where("id_fingerprint", $id)->get('mesin_fingerprint')->result()[0];
+
+        $this->data['fingerprint'] = $this->FingerPrint->find()->where($condition)->get()->row_array();
+
         $this->load->view('page/fingerprint/edit_fingerprint', $this->data);
 
     }
@@ -96,12 +136,30 @@ class Fingerprint extends CI_Controller
     }
 
     public function deactive($id) {
-        $deacitve = $this->db->update("mesin_fingerprint","status = '0'","id_fingerprint='$id'");
-        if($deacitve) redirect("Dashboard/Fingerprint/index", "refresh");
+
+        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+            redirect('auth', 'refresh');
+        }
+
+        $condition = array('id_fingerprint' => $id);
+
+        $this->FingerPrint->find()->where($condition);
+        $deactive = $this->FingerPrint->update(array('status' => 0));
+
+        if($deactive) redirect("Dashboard/Fingerprint/index", "refresh");
     }
 
     public function activate($id) {
-        $activate = $this->db->query("update mesin_fingerprint set status = '1' where id_fingerprint = '$id'");
+
+        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+            redirect('auth', 'refresh');
+        }
+
+        $condition = array('id_fingerprint' => $id);
+
+        $this->FingerPrint->find()->where($condition);
+        $activate = $this->FingerPrint->update(array('status' => 1));
+
         if($activate) redirect("Dashboard/Fingerprint/index", "refresh");
     }
 

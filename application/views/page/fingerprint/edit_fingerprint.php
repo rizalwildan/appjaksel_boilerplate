@@ -26,28 +26,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                     <form action="<?= base_url(uri_string())?>" method="post">
                         <div class="box-body">
-                            <div class="text-danger">
-                                <?php echo form_error('nama_fingerprint')?>
-                            </div>
                             <div class="form-group">
-                                <label for="">Nama Fingerprint</label>
-                                <input type="text" name="nama_fingerprint" class="form-control" value="<?=$fingerprint->nama_fingerprint?>">
+                                <label for="">Nama Mesin</label>
+                                <div class="text-danger">
+                                    <?php echo form_error('nama_fingerprint')?>
+                                </div>
+                                <input type="text" name="nama_fingerprint" class="form-control" value="<?=$fingerprint['nama_fingerprint']?>">
                             </div>
-                            <div class="text-danger">
-                                <?php echo form_error('ip_address')?>
-                            </div>
+
                             <div class="form-group">
-                                <label for="">Email</label>
-                                <input type="text" name="ip_address" class="form-control" value="<?=$fingerprint->ip_address?>">
-                            </div>
-                            <div class="text-danger">
-                                <?php echo form_error('status')?>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Status</label>
-                                <br>
-                                <input type="hidden" name="status" value="0">
-                                <input type="checkbox" name="status" value="1" <?php if($fingerprint->status == 1) echo "checked"; ?>>
+                                <label for="">IP Address</label>
+                                <div class="text-danger">
+                                    <?php echo form_error('ip_address')?>
+                                </div>
+                                <input type="text" name="ip_address" class="form-control" value="<?=$fingerprint['ip_address']?>" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$">
                             </div>
                         </div>
                         <?php echo  form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash());  ?>

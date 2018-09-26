@@ -12,27 +12,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                     <form action="<?= base_url(uri_string())?>" method="post">
                         <div class="box-body">
-                            <div class="text-danger">
-                                <?php echo form_error('username')?>
-                            </div>
                             <div class="form-group">
-                                <label for="">Username</label>
+                                <label for="">Nama Mesin</label>
+                                <div class="text-danger">
+                                    <?php echo form_error('nama_fingerprint')?>
+                                </div>
                                 <input type="text" name="nama_fingerprint" placeholder="Nama Fingeprint" class="form-control">
                             </div>
-                            <div class="text-danger">
-                                <?php echo form_error('email')?>
-                            </div>
                             <div class="form-group">
-                                <label for="">Email</label>
-                                <input type="text" name="ip_address" placeholder="IP Address" class="form-control">
-                            </div>
-                            <div class="text-danger">
-                                <?php echo form_error('status')?>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Status</label>
-                                <br>
-                                <input type="checkbox" name="status" value="1">
+                                <label for="">IP Address</label>
+                                <div class="text-danger">
+                                    <?php echo form_error('ip_address')?>
+                                </div>
+                                <input type="text" name="ip_address" id="ip" placeholder="xxx.xxx.xxx.xxx" class="form-control" required pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$">
                             </div>
                         </div>
                         <?php echo  form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash());  ?>
@@ -46,3 +38,4 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
     </section>
 </div>
+

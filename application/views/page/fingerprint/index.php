@@ -45,32 +45,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         foreach ($fingerprint as $val):
                                         ?>
                                         <tr>
-                                            <td><?= $i?></td>
-                                            <td><?= $val->nama_fingerprint?></td>
-                                            <td><?= $val->ip_address?></td>
+                                            <td><?= $i++?></td>
+                                            <td><?= $val['nama_fingerprint'] ?></td>
+                                            <td><?= $val['ip_address'] ?></td>
                                             <td>
-                                                <?php if ($val->status == 1):?>
+                                                <?php if ($val['status'] == 1):?>
                                                 <span class="label label-success">Active</span>
                                                 <?php else:?>
                                                 <span class="label label-danger">Deactive</span>
                                                 <?php endif;?>
                                             </td>
                                             <td>
-                                                <a href="<?= base_url('Dashboard/Fingerprint/edit_fingerprint/'.$val->id_fingerprint)?>" class="btn btn-primary btn-sm btn-flat">Edit</a>
-                                                <?php if ($val->status == 1): ?>
-                                                <button type="button" class="btn btn-danger btn-sm btn-flat" data-toggle="modal" data-id="<?= $val->id_fingerprint?>" data-target="#exampleModal">
+                                                <a href="<?= base_url('Dashboard/Fingerprint/edit_fingerprint/'.$val['id_fingerprint'])?>" class="btn btn-primary btn-sm btn-flat">Edit</a>
+                                                <?php if ($val['status'] == 1): ?>
+                                                <button type="button" class="btn btn-danger btn-sm btn-flat" data-toggle="modal" data-id="<?= $val['id_fingerprint']?>" data-target="#exampleModal">
                                                     Deactive
                                                 </button>
                                                 <?php else: ?>
-                                                <button type="button" class="btn btn-success btn-sm btn-flat" data-toggle="modal" data-id="<?= $val->id_fingerprint?>" data-target="#activateModal">
+                                                <button type="button" class="btn btn-success btn-sm btn-flat" data-toggle="modal" data-id="<?= $val['id_fingerprint']?>" data-target="#activateModal">
                                                     Activate
                                                 </button>
                                                 <?php endif; ?>
-
-                                                <a onclick="return confirm('yakin akan menghapus ini?');" href="<?= base_url('Dashboard/Fingerprint/delete_fingerprint/'.$val->id_fingerprint)?>" class="btn btn-warning btn-sm btn-flat">Delete</a>
                                             </td>
                                         </tr>
-                                        <?php $i++ ; endforeach; ?>
+                                        <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div>
