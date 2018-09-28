@@ -38,6 +38,7 @@ class User extends CI_Controller
         $this->load->js('assets/bower_components/jquery-slimscroll/jquery.slimscroll.min.js');
         $this->load->js('assets/bower_components/fastclick/lib/fastclick.js');
         $this->load->js('assets/dist/js/adminlte.min.js');
+        $this->load->js('assets/plugins.js');
     }
     public function index() {
         if (!$this->ion_auth->logged_in()) {

@@ -28,11 +28,6 @@
         ?><link rel="stylesheet" href="<?php echo $file; ?>" type="text/css" /><?php
     } echo "\n\t";
 
-    foreach($js as $file){
-        echo "\n\t\t";
-        ?><script src="<?php echo $file; ?>"></script><?php
-    } echo "\n\t";
-
     /** -- to here -- */
     ?>
 
@@ -53,5 +48,12 @@
             <strong>Copyright 2018 <a href="#">NineTwentyOne.</a></strong>
         </footer>
     </div>
+
+    <?php
+    foreach($js as $file){
+        echo "\n\t\t";
+        ?><script src="<?php echo $file; ?>"></script><?php
+    } echo "\n\t";
+    ?>
 </body>
 </html>

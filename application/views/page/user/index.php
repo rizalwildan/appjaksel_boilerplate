@@ -62,19 +62,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <?php if ($val->active == 1):?>
                                                 <span class="label label-success">Active</span>
                                                 <?php else:?>
-                                                <span class="label label-danger">Deactive</span>
+                                                <span class="label label-danger">Deactivate</span>
                                                 <?php endif;?>
                                             </td>
                                             <td>
                                                 <a href="<?= base_url('Dashboard/User/edit/'.$val->user_id)?>" class="btn btn-primary btn-sm btn-flat">Edit</a>
+
                                                 <?php if ($val->active == 1): ?>
-                                                <button type="button" class="btn btn-danger btn-sm btn-flat" data-toggle="modal" data-id="<?= $val->user_id?>" data-target="#exampleModal">
-                                                    Deactive
-                                                </button>
+                                                    <button type="button" id="deactive" class="btn btn-danger btn-sm btn-flat" data-toggle="modal" data-id="<?= $val->user_id?>" data-url="<?= base_url('Dashboard/User/deactive/')?>" data-target="#exampleModal">
+                                                        Deactive
+                                                    </button>
                                                 <?php else: ?>
-                                                <button type="button" class="btn btn-success btn-sm btn-flat" data-toggle="modal" data-id="<?= $val->user_id?>" data-target="#activateModal">
-                                                    Activate
-                                                </button>
+                                                    <button type="button" id="active" class="btn btn-success btn-sm btn-flat" data-toggle="modal" data-id="<?= $val->user_id?>" data-url="<?= base_url('Dashboard/User/activate/')?>" data-target="#activateModal">
+                                                        Activate
+                                                    </button>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -136,23 +137,3 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     </section>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('#example').DataTable();
-
-        $('.alert-dismissible').fadeTo(1000, 500).slideUp(500, function () {
-            $('.alert-dismissible').alert('close');
-        })
-    })
-
-    $(document).on('click', '.btn-danger', function () {
-        var id = $(this).data('id');
-        $('#form-deactive').attr('action', '<?= base_url('Dashboard/User/deactive/')?>' + id);
-    })
-
-    $(document).on('click', '.btn-success', function () {
-        var id = $(this).data('id');
-        $('#form-activate').attr('action', '<?= base_url('Dashboard/User/activate/')?>' + id);
-    })
-</script>

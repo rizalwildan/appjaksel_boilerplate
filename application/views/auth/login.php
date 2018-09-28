@@ -11,7 +11,7 @@
         <form action="<?= base_url('auth/login')?>" method="post">
             <?php echo form_error('identity')?>
             <div class="form-group has-feedback">
-                <input type="email" class="form-control" placeholder="Email" name="identity">
+                <input type="text" class="form-control" placeholder="username" name="identity">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <?php echo form_error('password')?>

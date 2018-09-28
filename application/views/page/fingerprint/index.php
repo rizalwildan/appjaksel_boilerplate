@@ -52,17 +52,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <?php if ($val['status'] == 1):?>
                                                 <span class="label label-success">Active</span>
                                                 <?php else:?>
-                                                <span class="label label-danger">Deactive</span>
+                                                <span class="label label-danger">Deactivate</span>
                                                 <?php endif;?>
                                             </td>
                                             <td>
                                                 <a href="<?= base_url('Dashboard/Fingerprint/edit_fingerprint/'.$val['id_fingerprint'])?>" class="btn btn-primary btn-sm btn-flat">Edit</a>
                                                 <?php if ($val['status'] == 1): ?>
-                                                <button type="button" class="btn btn-danger btn-sm btn-flat" data-toggle="modal" data-id="<?= $val['id_fingerprint']?>" data-target="#exampleModal">
+                                                <button type="button" id="deactive" class="btn btn-danger btn-sm btn-flat" data-toggle="modal" data-id="<?= $val['id_fingerprint']?>" data-url="<?= base_url('Dashboard/Fingerprint/deactive/')?>" data-target="#exampleModal">
                                                     Deactive
                                                 </button>
                                                 <?php else: ?>
-                                                <button type="button" class="btn btn-success btn-sm btn-flat" data-toggle="modal" data-id="<?= $val['id_fingerprint']?>" data-target="#activateModal">
+                                                <button type="button" id="active" class="btn btn-success btn-sm btn-flat" data-toggle="modal" data-id="<?= $val['id_fingerprint']?>" data-url="<?= base_url('Dashboard/Fingerprint/activate/')?>" data-target="#activateModal">
                                                     Activate
                                                 </button>
                                                 <?php endif; ?>
@@ -126,23 +126,3 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     </section>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('#example').DataTable();
-
-        $('.alert-dismissible').fadeTo(1000, 500).slideUp(500, function () {
-            $('.alert-dismissible').alert('close');
-        })
-    })
-
-    $(document).on('click', '.btn-danger', function () {
-        var id = $(this).data('id');
-        $('#form-deactive').attr('action', '<?= base_url('Dashboard/Fingerprint/deactive/')?>' + id);
-    })
-
-    $(document).on('click', '.btn-success', function () {
-        var id = $(this).data('id');
-        $('#form-activate').attr('action', '<?= base_url('Dashboard/Fingerprint/activate/')?>' + id);
-    })
-</script>

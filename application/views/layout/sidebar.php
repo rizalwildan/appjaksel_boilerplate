@@ -11,6 +11,9 @@
                     <li>
                         <a href="#"><i class="fa fa-circle-o"></i> Absensi</a>
                     </li>
+                    <li class="<?= ($this->uri->segment(2) == 'Bagian') ? 'active' : ''?>">
+                        <a href="<?= base_url('Dashboard/Bagian/index')?>"><i class="fa fa-circle-o"></i> Bagian</a>
+                    </li>
                     <li class="<?= ($this->uri->segment(2) == 'Fingerprint') ? 'active' : ''?>">
                         <a href="<?= base_url('Dashboard/Fingerprint/index')?>"><i class="fa fa-circle-o"></i> Mesin Finger Print</a>
                     </li>

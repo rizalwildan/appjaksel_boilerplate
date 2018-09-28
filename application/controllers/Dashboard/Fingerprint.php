@@ -42,6 +42,7 @@ class Fingerprint extends CI_Controller
         $this->load->js('assets/bower_components/jquery-slimscroll/jquery.slimscroll.min.js');
         $this->load->js('assets/bower_components/fastclick/lib/fastclick.js');
         $this->load->js('assets/dist/js/adminlte.min.js');
+        $this->load->js('assets/plugins.js');
     }
 
     public function index() {
