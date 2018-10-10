@@ -16,6 +16,7 @@ class Fingerprint extends CI_Controller
         $this->lang->load('auth');
         $this->load->helper('language');
         $this->load->model('Fingerprint_model', 'FingerPrint');
+        $this->hari = $this->lib_hari->cek();
         $this->_init();
     }
 
@@ -162,6 +163,232 @@ class Fingerprint extends CI_Controller
         $activate = $this->FingerPrint->update(array('status' => 1));
 
         if($activate) redirect("Dashboard/Fingerprint/index", "refresh");
+    }
+
+
+    //fitur yang berhubungan dengan mesin fingerprint
+    public function thishari(){
+      print_r($this->hari);
+      
+    }
+    public function tarikDataAll(){
+      ini_set('max_execution_time', 600);
+      $this->db->empty_table('absen_temp');
+      if($this->hari[0]['status'] == 1){
+        $mesin = $this->db->get('mesin_fingerprint')->result_array();
+        for ($i=0; $i <count($mesin) ; $i++) { 
+          $ip_address = $mesin[$i]['ip_address'];
+          if($mesin[$i]['status'] == 1){
+            $this->tarikDataPerMesin($ip_address);
+          }
+        }
+        $this->db->query('delete from absen_temp where date(DateTime) != date(now())');
+        // $this->db->query("delete from absen_temp where date(DateTime) < '2018-09-03'");
+        $this->pindahDataToAbsen();
+      }
+    }
+    public function tarikDataPerMesin($ip_address){
+      ini_set('max_execution_time', 300);
+      $data = $this->lib_fingerprint->getData($ip_address);
+      if($data != null){
+        $this->db->insert_batch('absen_temp', $data);
+      }
+    }
+
+    public function pindahDataToAbsen(){
+      ini_set('max_execution_time', 600);
+      $id_user_arr = $this->db->distinct()->select("id_user")->get('absen_temp')->result_array();
+      for ($i=0; $i <count($id_user_arr) ; $i++) {
+        $pulang_awal = null;
+        $lembur = null;
+        $telat = null;
+        $id_user = $id_user_arr[$i]['id_user'];
+        // $tanggal = explode(" ", $id_user_arr[$i]['DateTime'])[0];
+        $tanggal = date("Y-m-d");
+        $jam_masuk_kantor = $this->lib_hari->cekByDate($tanggal)[0]['jam_masuk'];
+        $jam_pulang_kantor = $this->lib_hari->cekByDate($tanggal)[0]['jam_pulang'];
+
+        $this->db->where("id_user = '$id_user' AND tanggal = '$tanggal'");
+        if($this->db->get('absen')->num_rows() == 0){
+          $this->db->where("id_user = '$id_user' AND date(DateTime) = '$tanggal'");
+          $this->db->select("min(time(DateTime)) as jam_pertama , max(time(DateTime)) as jam_terakhir");
+          $jam = $this->db->get('absen_temp')->result_array();
+          if($jam[0]['jam_pertama'] < '12:00:00'){
+            $jam_masuk = $jam[0]['jam_pertama'];
+            if($jam_masuk > $jam_masuk_kantor){
+              $telat = strtotime($jam_masuk)  - strtotime($jam_masuk_kantor);
+              $telat = date("H:i:s", $telat);
+            }
+          }else{
+            $jam_masuk = null;
+            $telat = null;
+          }
+          if($jam[0]['jam_terakhir'] >= '12:00:00'){
+            $jam_pulang = $jam[0]['jam_terakhir'];
+            if($jam_pulang < $jam_pulang_kantor){
+              $pulang_awal = strtotime($jam_pulang_kantor) - strtotime($jam_pulang);
+              $pulang_awal = date("H:i:s", $pulang_awal);
+            }else{
+              $lembur = strtotime($jam_pulang) - strtotime($jam_pulang_kantor);
+              $lembur = date("H:i:s", $lembur);
+            }
+          }else{
+            $jam_pulang = null;
+            $lembur = null;
+            $pulang_awal = null;
+          }
+          //ngeset telat, pulang awal dan lembur
+          $data_insert = array(
+                        'id_user' => $id_user,
+                        'tanggal' => $tanggal,
+                        'jam_masuk' => $jam_masuk,
+                        'jam_pulang' => $jam_pulang,
+                        'telat' => $telat,
+                        'pulang_awal' =>$pulang_awal,
+                        'lembur' =>$lembur
+          );
+          $this->db->insert('absen', $data_insert);
+        }else{
+          $this->db->where("id_user = '$id_user' AND date(DateTime) = '$tanggal'");
+          $this->db->select("min(time(DateTime)) as jam_pertama , max(time(DateTime)) as jam_terakhir");
+          $jam = $this->db->get('absen_temp')->result_array();
+          if($jam[0]['jam_pertama'] < '12:00:00'){
+            $jam_masuk = $jam[0]['jam_pertama'];
+            if($jam_masuk > $jam_masuk_kantor){
+              $telat = strtotime($jam_masuk)  - strtotime($jam_masuk_kantor);
+              $telat = date("H:i:s", $telat);
+            }
+          }else{
+            $jam_masuk = null;
+            $telat = null;
+          }
+          if($jam[0]['jam_terakhir'] > '12:00:00'){
+            $jam_pulang = $jam[0]['jam_terakhir'];
+            if($jam_pulang < $jam_pulang_kantor){
+              $pulang_awal = strtotime($jam_pulang_kantor) - strtotime($jam_pulang);
+              $pulang_awal = date("H:i:s", $pulang_awal);
+            }else{
+              $lembur = strtotime($jam_pulang) - strtotime($jam_pulang_kantor);
+              $lembur = date("H:i:s", $lembur);
+            }
+          }else{
+            $jam_pulang = null;
+            $pulang_awal = null;
+            $lembur = null;
+          }
+          $data['id_user'] = $id_user;
+          $data['tanggal'] = $tanggal;
+          $data_update['jam_masuk'] = $jam_masuk;
+          $data_update['jam_pulang'] = $jam_pulang;
+          $data_update['telat'] = $telat;
+          $data_update['pulang_awal'] = $pulang_awal;
+          $data_update['lembur'] = $lembur;
+          $this->db->where($data);
+          $this->db->update('absen', $data_update);
+        }
+      }
+    }
+
+    public function pindahDataToAbsenWithTanggal(){
+      ini_set('max_execution_time', 600);
+      $tanggal1 =  $this->db->distinct()->select("date(DateTime) as tanggal")->order_by("date(DateTime)","ASC")->get('absen_temp')->result_array();
+      // dd($tanggal);
+      for ($t=0; $t < count($tanggal1); $t++) { 
+        if($this->lib_hari->cekByDate($tanggal1[$t]['tanggal'])[0]["status"]==1){
+          $tanggal = $tanggal1[$t]['tanggal'];
+          $id_user_arr = $this->db->distinct()->select("id_user")->get('absen_temp')->result_array();
+          for ($i=0; $i <count($id_user_arr) ; $i++) {
+            $pulang_awal = null;
+            $lembur = null;
+            $telat = null;
+            $id_user = $id_user_arr[$i]['id_user'];
+            // $tanggal = explode(" ", $id_user_arr[$i]['DateTime'])[0];
+            // $tanggal = date("Y-m-d");
+            $jam_masuk_kantor = $this->lib_hari->cekByDate($tanggal)[0]['jam_masuk'];
+            $jam_pulang_kantor = $this->lib_hari->cekByDate($tanggal)[0]['jam_pulang'];
+
+            $this->db->where("id_user = '$id_user' AND tanggal = '$tanggal'");
+            if($this->db->get('absen')->num_rows() == 0){
+              $this->db->where("id_user = '$id_user' AND date(DateTime) = '$tanggal'");
+              $this->db->select("min(time(DateTime)) as jam_pertama , max(time(DateTime)) as jam_terakhir");
+              $jam = $this->db->get('absen_temp')->result_array();
+              if($jam[0]['jam_pertama'] < '12:00:00'){
+                $jam_masuk = $jam[0]['jam_pertama'];
+                if($jam_masuk > $jam_masuk_kantor){
+                  $telat = strtotime($jam_masuk)  - strtotime($jam_masuk_kantor);
+                  $telat = date("H:i:s", $telat);
+                }
+              }else{
+                $jam_masuk = null;
+                $telat = null;
+              }
+              if($jam[0]['jam_terakhir'] >= '12:00:00'){
+                $jam_pulang = $jam[0]['jam_terakhir'];
+                if($jam_pulang < $jam_pulang_kantor){
+                  $pulang_awal = strtotime($jam_pulang_kantor) - strtotime($jam_pulang);
+                  $pulang_awal = date("H:i:s", $pulang_awal);
+                }else{
+                  $lembur = strtotime($jam_pulang) - strtotime($jam_pulang_kantor);
+                  $lembur = date("H:i:s", $lembur);
+                }
+              }else{
+                $jam_pulang = null;
+                $lembur = null;
+                $pulang_awal = null;
+              }
+              //ngeset telat, pulang awal dan lembur
+              $data_insert = array(
+                            'id_user' => $id_user,
+                            'tanggal' => $tanggal,
+                            'jam_masuk' => $jam_masuk,
+                            'jam_pulang' => $jam_pulang,
+                            'telat' => $telat,
+                            'pulang_awal' =>$pulang_awal,
+                            'lembur' =>$lembur
+              );
+              $this->db->insert('absen', $data_insert);
+            }else{
+              $this->db->where("id_user = '$id_user' AND date(DateTime) = '$tanggal'");
+              $this->db->select("min(time(DateTime)) as jam_pertama , max(time(DateTime)) as jam_terakhir");
+              $jam = $this->db->get('absen_temp')->result_array();
+              if($jam[0]['jam_pertama'] < '12:00:00'){
+                $jam_masuk = $jam[0]['jam_pertama'];
+                if($jam_masuk > $jam_masuk_kantor){
+                  $telat = strtotime($jam_masuk)  - strtotime($jam_masuk_kantor);
+                  $telat = date("H:i:s", $telat);
+                }
+              }else{
+                $jam_masuk = null;
+                $telat = null;
+              }
+              if($jam[0]['jam_terakhir'] > '12:00:00'){
+                $jam_pulang = $jam[0]['jam_terakhir'];
+                if($jam_pulang < $jam_pulang_kantor){
+                  $pulang_awal = strtotime($jam_pulang_kantor) - strtotime($jam_pulang);
+                  $pulang_awal = date("H:i:s", $pulang_awal);
+                }else{
+                  $lembur = strtotime($jam_pulang) - strtotime($jam_pulang_kantor);
+                  $lembur = date("H:i:s", $lembur);
+                }
+              }else{
+                $jam_pulang = null;
+                $pulang_awal = null;
+                $lembur = null;
+              }
+              $data['id_user'] = $id_user;
+              $data['tanggal'] = $tanggal;
+              $data_update['jam_masuk'] = $jam_masuk;
+              $data_update['jam_pulang'] = $jam_pulang;
+              $data_update['telat'] = $telat;
+              $data_update['pulang_awal'] = $pulang_awal;
+              $data_update['lembur'] = $lembur;
+              $this->db->where($data);
+              $this->db->update('absen', $data_update);
+            }
+          }
+        }
+      }
+      
     }
 
 }

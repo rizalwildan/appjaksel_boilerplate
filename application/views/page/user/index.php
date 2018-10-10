@@ -33,11 +33,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Username</th>
-                                            <th>Email</th>
                                             <th>Full Name</th>
-                                            <th>Phone</th>
-                                            <th>Group</th>
+                                            <th>Jabatan</th>
+                                            <th>Bagian</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -49,15 +47,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         ?>
                                         <tr>
                                             <td><?= $i++?></td>
-                                            <td><?= $val->username?></td>
-                                            <td><?= $val->email?></td>
                                             <td><?= $val->first_name.' '.$val->last_name?></td>
-                                            <td><?= $val->phone?></td>
-                                            <td>
+                                            <td><?= $val->jabatan->jabatan?></td>
+                                            <td><?= $val->bagian->bagian?></td>
+                                            <!-- <td>
                                                 <?php foreach($val->groups as $row):?>
                                                 <?= $row->name.','?>
                                                 <?php endforeach;?>
-                                            </td>
+                                            </td> -->
                                             <td>
                                                 <?php if ($val->active == 1):?>
                                                 <span class="label label-success">Active</span>

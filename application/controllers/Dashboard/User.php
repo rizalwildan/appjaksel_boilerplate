@@ -54,6 +54,8 @@ class User extends CI_Controller
             foreach ($this->data['users'] as $k => $user)
             {
                 $this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
+                $this->data['users'][$k]->jabatan = $this->db->select('jabatan')->from('jabatan')->join('users', 'users.id_jabatan = jabatan.id_jabatan')->where("users.id = '$user->id'")->get()->result()[0];
+                $this->data['users'][$k]->bagian = $this->db->select('bagian')->from('bagian')->join('users', 'users.id_bagian = bagian.id_bagian')->where("users.id = '$user->id'")->get()->result()[0];
             }
             $this->load->view('page/user/index', $this->data);
         }
