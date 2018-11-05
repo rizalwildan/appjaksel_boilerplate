@@ -41,7 +41,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <th>No</th>
                                             <th>Nama Bagian</th>
                                             <th>Nama Kepala</th>
-                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
@@ -51,26 +50,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         foreach ($bagian as $row):?>
                                         <tr>
                                             <td><?= $i++?></td>
-                                            <td><?= $row['nama_bagian']?></td>
+                                            <td><?= $row['bagian']?></td>
                                             <td><?= $row['first_name'].' '.$row['last_name']?></td>
                                             <td>
-                                                <?php if ($row['status'] == 1):?>
-                                                <span class="label label-success">Active</span>
-                                                <?php else:?>
-                                                <span class="label label-danger">Deactivate</span>
-                                                <?php endif;?>
-                                            </td>
-                                            <td>
                                                 <a href="<?= base_url('Dashboard/Bagian/edit/'.$row['id_bagian'])?>" class="btn btn-primary btn-sm btn-flat">Edit</a>
-                                                <?php if ($row['status'] == 1): ?>
-                                                    <button type="button" id="deactive" class="btn btn-danger btn-sm btn-flat" data-toggle="modal" data-id="<?= $row['id_bagian']?>" data-url="<?= base_url('Dashboard/Bagian/deactive/')?>" data-target="#exampleModal">
-                                                        Deactive
-                                                    </button>
-                                                <?php else: ?>
-                                                    <button type="button" id="active" class="btn btn-success btn-sm btn-flat" data-toggle="modal" data-id="<?= $row['id_bagian']?>" data-url="<?= base_url('Dashboard/Bagian/activate/')?>" data-target="#activateModal">
-                                                        Activate
-                                                    </button>
-                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                         <?php endforeach;?>

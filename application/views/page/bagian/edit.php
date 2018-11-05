@@ -22,9 +22,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <div class="form-group">
                                 <label for="">Nama Bagian</label>
                                 <div class="text-danger">
-                                    <?php echo form_error('nama_bagian')?>
+                                    <?php echo form_error('bagian')?>
                                 </div>
-                                <input type="text" name="nama_bagian" class="form-control" value="<?=$bagian['nama_bagian']?>">
+                                <input type="text" name="bagian" class="form-control" value="<?=$bagian['bagian']?>">
                             </div>
 
                             <div class="form-group">

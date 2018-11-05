@@ -59,8 +59,8 @@ class Bagian extends CI_Controller
             //set the flash data error message if there is one
             $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
-            $this->data['bagian'] = $this->BagianModel->find()
-                                    ->join('users', 'users.id = bagian.id_kepala_bagian')->get()->result_array();
+            $this->data['bagian'] = $this->BagianModel->find()->select('bagian.*, u.id, u.first_name, u.last_name')
+                                    ->join('users u', 'u.id = bagian.id_kepala_bagian')->get()->result_array();
 
             $this->load->view('page/bagian/index', $this->data);
         }
@@ -103,14 +103,14 @@ class Bagian extends CI_Controller
         }
 
         //Validation rule
-        $this->form_validation->set_rules('nama_bagian', 'Nama Bagian', 'required|xss_clean');
+        $this->form_validation->set_rules('bagian', 'Nama Bagian', 'required|xss_clean');
         $this->form_validation->set_rules('kepala_bagian', 'Nama Kepala Bagian', 'required|xss_clean');
 
         $condition = array('id_bagian' => $id);
 
         if ($this->form_validation->run() == TRUE) {
             $data = array(
-                'nama_bagian' => $this->input->post('nama_bagian'),
+                'bagian' => $this->input->post('bagian'),
                 'id_kepala_bagian' => $this->input->post('kepala_bagian')
             );
 

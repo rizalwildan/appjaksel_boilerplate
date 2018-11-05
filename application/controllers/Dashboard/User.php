@@ -67,18 +67,23 @@ class User extends CI_Controller
         }
         $tables = $this->config->item('tables','ion_auth');
         $groups=$this->ion_auth->groups()->result_array();
+        $jabatan = $this->db->get('jabatan')->result_array();
+        $bagian = $this->db->get('bagian')->result_array();
         //Validation Rules
         $this->form_validation->set_rules('username', $this->lang->line('create_user_validation_username_label'), 'required|xss_clean');
         $this->form_validation->set_rules('first_name', $this->lang->line('create_user_validation_fname_label'), 'required|xss_clean');
         $this->form_validation->set_rules('last_name', $this->lang->line('create_user_validation_lname_label'), 'required|xss_clean');
         $this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'required|valid_email|is_unique['.$tables['users'].'.email]');
         $this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'required|xss_clean');
+        $this->form_validation->set_rules('id_jabatan', $this->lang->line('create_user_validation_phone_label'), 'required|xss_clean');
+        $this->form_validation->set_rules('id_bagian', $this->lang->line('create_user_validation_phone_label'), 'required|xss_clean');
         $this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
         $this->form_validation->set_rules('groups[]', $this->lang->line('create_user_validation_groups_label'), 'required|xss_clean');
         if (isset($_POST) && !empty($_POST)) {
             if ($this->form_validation->run() == true)
             {
+                echo "form validation true";
                 $username = strtolower($this->input->post('username'));
                 $email    = strtolower($this->input->post('email'));
                 $password = $this->input->post('password');
@@ -88,21 +93,27 @@ class User extends CI_Controller
                     'last_name'  => $this->input->post('last_name'),
                     'phone'      => $this->input->post('phone'),
                 );
+            }else{
+              echo "error<br>";
             }
             if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $groups))
             {
+                echo "register true";
                 //check to see if we are creating the user
                 //redirect them back to the admin page
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
                 redirect("Dashboard/User/index", 'refresh');
             }
             else {
+                echo "register error";
                 //display the create user form
                 //set the flash data error message if there is one
                 $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
             }
         }
         $this->data['groups'] = $groups;
+        $this->data['jabatan'] = $jabatan;
+        $this->data['bagian'] = $bagian;
         $this->load->view('auth/create_user', $this->data);
     }
     public function edit($id) {
@@ -111,10 +122,16 @@ class User extends CI_Controller
             redirect('auth', 'refresh');
         }
         $user = $this->ion_auth->user($id)->row();
+        $jabatan = $this->db->get('jabatan')->result_array();
+        $currentJabatan = $this->db->select('id_jabatan')->where('id', $id)->get('users')->result_array()[0];
+        $bagian = $this->db->get('bagian')->result_array();
+        $currentBagian = $this->db->select('id_bagian')->where('id', $id)->get('users')->result_array()[0];
         $groups=$this->ion_auth->groups()->result_array();
         $currentGroups = $this->ion_auth->get_users_groups($id)->result();
         //validate form input
         $this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'required|xss_clean');
+        $this->form_validation->set_rules('id_jabatan', $this->lang->line('create_user_validation_phone_label'), 'required|xss_clean');
+        $this->form_validation->set_rules('id_bagian', $this->lang->line('create_user_validation_phone_label'), 'required|xss_clean');
         $this->form_validation->set_rules('last_name', $this->lang->line('edit_user_validation_lname_label'), 'required|xss_clean');
         $this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'required|xss_clean');
         $this->form_validation->set_rules('groups', $this->lang->line('edit_user_validation_groups_label'), 'xss_clean');
@@ -124,6 +141,8 @@ class User extends CI_Controller
                 'first_name' => $this->input->post('first_name'),
                 'last_name'  => $this->input->post('last_name'),
                 'phone'      => $this->input->post('phone'),
+                'id_bagian'  => $this->input->post('id_bagian'),
+                'id_jabatan'  => $this->input->post('id_jabatan')
             );
             // Only allow updating groups if user is admin
             if ($this->ion_auth->is_admin())
@@ -166,6 +185,10 @@ class User extends CI_Controller
         $this->data['user'] = $user;
         $this->data['groups'] = $groups;
         $this->data['currentGroups'] = $currentGroups;
+        $this->data['jabatan'] = $jabatan;
+        $this->data['currentJabatan'] = $currentJabatan['id_jabatan'];
+        $this->data['bagian'] = $bagian;
+        $this->data['currentBagian'] = $currentBagian['id_bagian'];
         $this->load->view('auth/edit_user', $this->data);
     }
     public function deactive($id) {

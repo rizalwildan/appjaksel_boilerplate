@@ -1,3 +1,4 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <header class="main-header">
     <a href="#" class="logo">
             <span class="logo-lg">

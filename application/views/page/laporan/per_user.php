@@ -32,6 +32,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <div class="col col-md-6">
             <table class="table">
               <tr>
+                <td>Bagian</td>
+                <td>:</td>
+                <td class="form-group">
+                  <select name="id_user" class="form-control">
+                    <?php foreach ($users as $user): ?>
+                      <option value="<?=$user['id']?>"><?=$user['first_name'];?></option>
+                    <?php endforeach ?>
+                  </select>
+                </td>
+              </tr>
+              <tr>
                 <td>Range Tanggal</td>
                 <td>:</td>
                 <td><input name="tanggal" type="text" class="form-control pull-right" id="reservation"></td>
@@ -48,9 +59,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       </form>
     </div>
   </div>
-  
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script>
-    $(document).ready(function() {
-      $('#reservation').daterangepicker({format:'dd/mm/yyyy'});
-    });
+  $(document).ready(function() {
+        console.log("reservation");
+        $('#reservation').daterangepicker({format:'dd/mm/yyyy'});
+      });
   </script>

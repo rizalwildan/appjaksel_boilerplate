@@ -51,6 +51,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <label for="">Phone</label>
                             <input type="number" placeholder="Phone" value="<?= $user->phone?>" name="phone" class="form-control">
                         </div>
+                         <div class="text-danger">
+                                <?php echo form_error('jabatan')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Jabatan</label>
+                                <select name="id_jabatan" class="form-control">
+                                <?php foreach ($jabatan as $row) { ?>
+                                  <option value="<?=$row['id_jabatan'];?>" <?= ($row['id_jabatan'] == $currentJabatan) ? 'selected' : '';?> ><?=$row['jabatan'];?></option>
+                                <?php } ?>
+                                </select>
+                            </div>
+                            <div class="text-danger">
+                                <?php echo form_error('bagian')?>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Bagian</label>
+                                <select name="id_bagian" class="form-control">
+                                <?php foreach ($bagian as $row) { ?>
+                                  <option value="<?=$row['id_bagian'];?>"  <?= ($row['id_bagian'] == $currentBagian) ? 'selected' : '';?> ><?=$row['bagian'];?></option>
+                                <?php } ?>
+                                </select>
+                            </div>
                         <div class="text-danger">
                             <?php echo form_error('password')?>
                         </div>

@@ -41,9 +41,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <tr>
                                             <th>No</th>
                                             <th>Nama</th>
-                                            <th>Jam Masuk</th>
                                             <th>Telat</th>
-                                            <th>Jam Pulang</th>
                                             <th>Pulang Awal</th>
                                             <th>Lembur</th>
                                             <th>Ganti</th>
@@ -53,15 +51,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <tbody>
                                         <?php
                                         $i = 1;
-                                        foreach ($laporan as $row):?>
+                                        foreach ($laporan as $row):
+                                          $id_user = $row['user']['id'];
+                                          ?>
                                         <tr>
-                                            <td><?= $i++?></td>
-                                            <td><?php print_r($row['user']['first_name']);?></td>
-                                            <td><?php //print_r($row['jam_masuk']);?></td>
+                                            <td><?=$i++?></td>
+                                            <td><a href="<?= base_url().'Dashboard/Laporan/getLaporanUser/'.$id_user?>"> <?php print_r($row['user']['first_name']);?></a></td>
                                             <td><?php print_r($row['absen']['telat']);?></td>
-                                            <td><?php //print_r($row['jam_pulang']);?></td>
-                                            <td><?php //print_r($row['pulang_awal']);?></td>
-                                            <td><?php //print_r($row['lembur']);?></td>
+                                            <td><?php print_r($row['absen']['pulang_awal']);?></td>
+                                            <td><?php //print_r($row['absen']['lembur']);?></td>
                                             <td><?php print_r($row['absen']['ganti']);?></td>
                                             <td><?php print_r($row['absen']['potong']);?></td>
                                         </tr>
