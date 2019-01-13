@@ -18,7 +18,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <br>
             <br>
 
-            <?php print_r($this->session->userdata());?>
+            <?php //print_r($this->session->userdata());?>
         </div>
     </article>
 </div>

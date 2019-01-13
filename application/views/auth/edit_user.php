@@ -92,7 +92,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <label for="">Password Confirm</label>
                             <input type="password" placeholder="Confirm Password" name="password_confirm" class="form-control">
                         </div>
-                        <?php if ($this->ion_auth->is_admin()):?>
+                        <!-- !$this->ion_auth->is_admin()) menjadi $this->ion_auth->is_admin())-->
+                        <?php if (!$this->ion_auth->is_admin()):?>
                             <h4 class="title">User Group</h4>
                             <select name="groups">
                               <?php foreach ($groups as $group): ?>

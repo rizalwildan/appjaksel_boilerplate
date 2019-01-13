@@ -22,7 +22,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="box">
                     <div class="box-header">
                         <h3 class="box-title">Data Users</h3>
-                        <a href="<?= base_url('Dashboard/User/create_user')?>" class="btn btn-primary btn-sm btn-flat pull-right">Create Users</a>
+                        <!-- <a href="<?= base_url('Dashboard/User/create_user')?>" class="btn btn-primary btn-sm btn-flat pull-right">Create Users</a> -->
                     </div>
                     <div class="box-body">
                         <div class="dataTables_wrapper form-inline dt-bootstrap">
