@@ -32,8 +32,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <table id="example" class="table table-striped table-bordered" style="width:100%">
                                         <thead>
                                         <tr>
-                                            <th>No</th>
+                                            <th>ID USER</th>
                                             <th>Full Name</th>
+                                            <th>NIP</th>
                                             <th>Jabatan</th>
                                             <th>Bagian</th>
                                             <th>Status</th>
@@ -46,8 +47,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         foreach ($users as $val):
                                         ?>
                                         <tr>
-                                            <td><?= $i++?></td>
+                                            <td><?= $val->id?></td>
                                             <td><?= $val->first_name.' '.$val->last_name?></td>
+                                            <td><?= $val->nip?></td>
                                             <td><?= $val->jabatan->jabatan?></td>
                                             <td><?= $val->bagian->bagian?></td>
                                             <!-- <td>

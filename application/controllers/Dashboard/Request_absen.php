@@ -30,6 +30,7 @@ class Request_absen extends CI_Controller
         $this->load->css('assets/bower_components/font-awesome/css/font-awesome.min.css');
         $this->load->css('assets/bower_components/Ionicons/css/ionicons.min.css');
         $this->load->css('assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css');
+
         //Data table
         $this->load->css('assets/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css');
         $this->load->css('assets/dist/css/AdminLTE.min.css');
@@ -39,6 +40,7 @@ class Request_absen extends CI_Controller
         $this->load->js('assets/bower_components/jquery/dist/jquery.min.js');
         $this->load->js('assets/bower_components/bootstrap/dist/js/bootstrap.min.js');
         $this->load->js('assets/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js');
+        
         //Data table
         $this->load->js('assets/bower_components/datatables.net/js/jquery.dataTables.min.js');
         $this->load->js('assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js');
@@ -79,7 +81,7 @@ class Request_absen extends CI_Controller
             $data = array(
                 'id_user' => $this->input->post('id_user'),
                 'tanggal' => date('Y-m-d' , strtotime($this->input->post('tanggal'))),
-                'alasan' => $this->input->post('alasan'),
+                'keterangan' => $this->input->post('alasan'),
                 'status' => 0
             );
 
@@ -104,8 +106,8 @@ class Request_absen extends CI_Controller
 
         $condition = array('id_request' => $id);
 
-        // $r = $this->Model->find()->where($condition);
-        // $deactive = $this->Model->update(array('status' => 1));
+        $r = $this->Model->find()->where($condition);
+        $deactive = $this->Model->update(array('status' => 1));
         
         $req = $this->db->where($condition)->get('request_absen')->result_array()[0];
         // print_r($req);
@@ -131,6 +133,6 @@ class Request_absen extends CI_Controller
             }
         }
         // print_r($absen);
-        // if($deactive) redirect("Dashboard/Request_absen/index", "refresh");
+        if($deactive) redirect("Dashboard/Request_absen/index", "refresh");
     }
 }

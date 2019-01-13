@@ -169,8 +169,8 @@ class Fingerprint extends CI_Controller
     //fitur yang berhubungan dengan mesin fingerprint
     public function thishari(){
       print_r($this->hari);
-      
     }
+
     public function tarikDataAll(){
       ini_set('max_execution_time', 600);
       $this->db->empty_table('absen_temp');
@@ -187,6 +187,7 @@ class Fingerprint extends CI_Controller
         $this->pindahDataToAbsen();
       }
     }
+    
     public function tarikDataPerMesin($ip_address){
       ini_set('max_execution_time', 300);
       $data = $this->lib_fingerprint->getData($ip_address);
@@ -196,7 +197,7 @@ class Fingerprint extends CI_Controller
     }
 
     public function pindahDataToAbsen(){
-      ini_set('max_execution_time', 600);
+      ini_set('max_execution_time', 1200);
       $id_user_arr = $this->db->distinct()->select("id_user")->get('absen_temp')->result_array();
       for ($i=0; $i <count($id_user_arr) ; $i++) {
         $pulang_awal = null;
@@ -290,7 +291,7 @@ class Fingerprint extends CI_Controller
     }
 
     public function pindahDataToAbsenWithTanggal(){
-      ini_set('max_execution_time', 600);
+      ini_set('max_execution_time', 3600);
       $tanggal1 =  $this->db->distinct()->select("date(DateTime) as tanggal")->order_by("date(DateTime)","ASC")->get('absen_temp')->result_array();
       // dd($tanggal);
       for ($t=0; $t < count($tanggal1); $t++) { 

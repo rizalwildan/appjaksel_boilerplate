@@ -27,6 +27,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       <div class="box-header with-border">
         <h3 class="box-title">Range Laporan Absensi Karyawan</h3>
       </div>
+      
       <form class="form-horizontal" method="post" action="<?=base_url();?>Dashboard/Laporan/<?=$url?>">
         <div class="box-body">
           <div class="col col-md-6">

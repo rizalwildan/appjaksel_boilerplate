@@ -50,23 +50,31 @@ class Laporan extends CI_Controller
     }
 
     public function index() {
+      if($this->session->userdata('tanggal') != null){
+        $this->session->unset_userdata('tanggal');
+      }
         if (!$this->ion_auth->logged_in()) {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
-        } elseif (!$this->ion_auth->is_admin()) {
+        } elseif ($this->ion_auth->is_admin()) {
             // return show_error('You must be an administrator to view this page.');
             $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
             $this->data['url'] = "getLaporanAll";
             $this->load->view('page/laporan/index', $this->data);
-        } else {
+        } elseif ($this->session->userdata('group_id') == 4) {
             //set the flash data error message if there is one
             $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-            $this->data['url'] = "getLaporanAll";
+            $this->data['url'] = "getLaporanPerBagian";
+            $this->load->view('page/laporan/index', $this->data);
+        } else{
+            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+            $this->data['url'] = "getLaporanPerUser";
             $this->load->view('page/laporan/index', $this->data);
         }
     }
 
     public function perBagian() {
+      $this->session->unset('tanggal');
         if (!$this->ion_auth->logged_in()) {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
@@ -105,8 +113,12 @@ class Laporan extends CI_Controller
         {
           redirect('auth', 'refresh');
         }
-      $this->session->set_userdata('tanggal',$this->input->post('tanggal'));
-    	$tanggal = explode(" - ", $this->input->post('tanggal'));
+        if($this->input->post('tanggal') != null){
+          $this->session->set_userdata('tanggal',$this->input->post('tanggal'));
+          $tanggal = explode(" - ", $this->input->post('tanggal'));
+        }else{
+          $tanggal = explode(" - ", $this->session->userdata('tanggal'));
+        }
 	    $tanggal_awal = date("Y-m-d", strtotime($tanggal[0]));
 	    $tanggal_akhir = date("Y-m-d", strtotime($tanggal[1]));
         //list the users
@@ -116,6 +128,7 @@ class Laporan extends CI_Controller
         	$laporanArray[$i]['absen'] = array(
         		"telat" => 0,
         		"ganti" => 0,
+            "lembur" => 0,
         		"pulang_awal" => 0,
         		"potong" => 0
         		);
@@ -170,21 +183,38 @@ class Laporan extends CI_Controller
         				echo $absen['pulang_awal'];
         			}	
         		}
+
+            if($absen['lembur'] != null){
+              $laporanArray[$i]['absen']['lembur']++;
+            }
         	}
         }
         $this->data['laporan'] = $laporanArray;
+        $this->session->set_userdata('laporanAll', $laporanArray);
         $this->load->view('page/laporan/tampil_laporan',$this->data);
     }
 
     public function getLaporanPerBagian(){
-    	if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+      
+    	if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !$this->session->userdata('group_id') == 4))
         {
             redirect('auth', 'refresh');
         }
-      $this->session->set_userdata('tanggal', $this->input->post('tanggal'));
-      $id_bagian = $this->input->post('id_bagian');
-      $tanggal = explode(" - ", $this->input->post('tanggal'));
-	    $tanggal_awal = date("Y-m-d", strtotime($tanggal[0]));
+      if($this->input->post('tanggal') != null){
+        $this->session->set_userdata('tanggal',$this->input->post('tanggal'));
+        $tanggal = explode(" - ", $this->input->post('tanggal'));
+      }else{
+        $tanggal = explode(" - ", $this->session->userdata('tanggal'));
+      }
+      
+      if($this->ion_auth->is_admin()){
+        $id_bagian = $this->input->post('id_bagian');
+      }elseif($this->session->userdata('group_id') == 4){
+        $user_id = $this->session->userdata('user_id');
+        $id_bagian = $this->db->select('id_bagian')->from('bagian')->where("id_kepala_bagian = $user_id")->get()->result_array()[0]['id_bagian'];
+      }
+
+      $tanggal_awal = date("Y-m-d", strtotime($tanggal[0]));
 	    $tanggal_akhir = date("Y-m-d", strtotime($tanggal[1]));
         //list the users
         $users = $this->db->where('id_bagian', $id_bagian)->get("users")->result_array();
@@ -237,6 +267,7 @@ class Laporan extends CI_Controller
         	}
         }
         $this->data['laporan'] = $laporanArray;
+        $this->session->set_userdata('laporanBagian', $laporanArray);
         $this->load->view('page/laporan/tampil_laporan',$this->data);
     }
     public function getLaporanUser($id_user){
@@ -245,7 +276,12 @@ class Laporan extends CI_Controller
             redirect('auth', 'refresh');
         }
       $this->data['users'] = $this->db->where('id', $id_user)->get('users')->result_array()[0];
-      $tanggal = explode(" - ", $this->session->userdata('tanggal'));
+      if($this->input->post('tanggal') != null){
+        $this->session->set_userdata('tanggal',$this->input->post('tanggal'));
+        $tanggal = explode(" - ", $this->input->post('tanggal'));
+      }else{
+        $tanggal = explode(" - ", $this->session->userdata('tanggal'));
+      }
       $tanggal_awal = date("Y-m-d", strtotime($tanggal[0]));
       $tanggal_akhir = date("Y-m-d", strtotime($tanggal[1]));
       $telat = 0;
@@ -296,11 +332,17 @@ class Laporan extends CI_Controller
           'potong' => $potong
           );
         $this->data['laporan'] = $absensi;
+        $this->session->set_userdata('laporanPerUser', $this->data);
         $this->load->view('page/laporan/tampil_laporan_per_user',$this->data);
     }
+
     public function getLaporanPerUser(){
-      $id_user = $this->input->post('id_user');
-      $this->data['users'] = $this->db->where('id', $id_user)->get('users');
+      if($this->input->post('id_user') != null){
+        $id_user = $this->input->post('id_user');
+      }else{
+        $id_user = $this->session->userdata('user_id');
+      }
+      $this->data['users'] = $this->db->where('id', $id_user)->get('users')->result_array()[0];
       if($this->input->post('tanggal') != null){
         $tanggal = explode(" - ", $this->input->post('tanggal'));
         $tanggal_awal = date("Y-m-d", strtotime($tanggal[0]));
@@ -354,6 +396,7 @@ class Laporan extends CI_Controller
           'potong' => $potong
           );
         $this->data['laporan'] = $absensi;
+        $this->session->set_userdata('laporanPerUser', $this->data);
         $this->load->view('page/laporan/tampil_laporan_per_user',$this->data);
       }
 
@@ -394,5 +437,4 @@ class Laporan extends CI_Controller
         	echo "<br>";
         }
     }
-    
 }

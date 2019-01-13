@@ -40,12 +40,11 @@ class Home extends CI_Controller
     public function index()
     {
         if (!$this->ion_auth->logged_in()) {
-            redirect('Auth/login');
+            redirect('auth/login');
         } else {
             //	    $this->load->model('Absen_model');
             //	    $record = new Absen_model();
             //	    $record = $record->find()->order_by('jam_masuk', 'DESC')->get()->result_array();
-
             $this->load->view('page/home');
         }
     }

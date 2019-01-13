@@ -1,13 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-/**
- * Created by PhpStorm.
- * User: rizal
- * Date: 9/27/2018
- * Time: 2:16 PM
- */
 ?>
-
+<script type="text/javascript">
+  window.onload = function() {
+    document.getElementById('pdf').value = '<?=json_encode($laporan);?>';
+  };
+</script>
 <div class="content-wrapper">
     <?php if ($this->session->flashdata('message')):?>
         <div class="row">
@@ -29,8 +27,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="box">
                     <div class="box-header">
                         <h3 class="box-title">Laporan Absensi</h3>
-                        <a href="<?= base_url()?>" class="btn btn-primary btn-sm btn-flat pull-right">Excel</a> 
-                        <a href="<?= base_url()?>" class="btn btn-primary btn-sm btn-flat pull-right">PDF</a>
+                        <form>
+                          <a href="#" class="btn btn-primary btn-sm btn-flat pull-right">Excel</a>
+                        </form>
+                        <form target="_blank" method="post" action="<?= base_url().'Dashboard/Printer/printAllPdf';?>" enctype='application/json'>
+                          <button type="submit" class="btn btn-primary btn-sm btn-flat pull-right">PDF</button> 
+                          <input hidden type="text" name="pdf" id="pdf" value="<?php json_encode($laporan);?>">
+                          <?php echo form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash()); ?>
+                          <?=($this->security->get_csrf_token_name()."<br>". $this->security->get_csrf_hash())?>
+                        </form>
+                        <a target="_blank" href="<?= base_url().'Dashboard/Printer/printAllPdf';?>">PDF</a>
+
                     </div>
                     <div class="box-body">
                         <div class="dataTables_wrapper form-inline dt-bootstrap">
@@ -39,14 +46,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <table id="example" class="table table-striped table-bordered">
                                         <thead>
                                         <tr>
-                                            <th>No</th>
+                                            <th>ID User</th>
                                             <th>Nama</th>
                                             <th>Telat</th>
                                             <th>Pulang Awal</th>
                                             <th>Lembur</th>
                                             <th>Ganti</th>
                                             <th>Potong</th>
-     									</tr>
+     									                  </tr>
                                         </thead>
                                         <tbody>
                                         <?php
@@ -55,11 +62,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                           $id_user = $row['user']['id'];
                                           ?>
                                         <tr>
-                                            <td><?=$i++?></td>
+                                            <td><?=$row['user']['id'];?></td>
                                             <td><a href="<?= base_url().'Dashboard/Laporan/getLaporanUser/'.$id_user?>"> <?php print_r($row['user']['first_name']);?></a></td>
                                             <td><?php print_r($row['absen']['telat']);?></td>
                                             <td><?php print_r($row['absen']['pulang_awal']);?></td>
-                                            <td><?php //print_r($row['absen']['lembur']);?></td>
+                                            <td><?php print_r($row['absen']['lembur']);?></td>
                                             <td><?php print_r($row['absen']['ganti']);?></td>
                                             <td><?php print_r($row['absen']['potong']);?></td>
                                         </tr>

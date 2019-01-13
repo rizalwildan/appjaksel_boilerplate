@@ -19,13 +19,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <label for="">Username</label>
                                 <input type="text" name="username" placeholder="username" class="form-control">
                             </div>
-                            <div class="text-danger">
+                            <!-- <div class="text-danger">
                                 <?php echo form_error('email')?>
                             </div>
                             <div class="form-group">
                                 <label for="">Email</label>
                                 <input type="email" name="email" placeholder="email" class="form-control">
-                            </div>
+                            </div> -->
                             <div class="text-danger">
                                 <?php echo form_error('first_name')?>
                             </div>
@@ -41,11 +41,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <input type="text" placeholder="Last Name" name="last_name" class="form-control">
                             </div>
                             <div class="text-danger">
-                                <?php echo form_error('phone')?>
+                                <?php echo form_error('nip')?>
                             </div>
                             <div class="form-group">
-                                <label for="">Phone</label>
-                                <input type="number" placeholder="Phone" name="phone" class="form-control">
+                                <label for="">NIP</label>
+                                <input type="text" placeholder="NIP" name="nip" class="form-control">
                             </div>
                             <div class="text-danger">
                                 <?php echo form_error('jabatan')?>
@@ -86,16 +86,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                             <?php if ($this->ion_auth->is_admin()):?>
                                 <h4 class="title">User Group</h4>
-                                <?php
-                                foreach ($groups as $group): ?>
-
-                                    <div class="checkbox">
-                                        <label for="">
-                                            <input type="checkbox" name="groups[]" value="<?= $group['id']?>">
-                                            <?= $group['name']?>
-                                        </label>
-                                    </div>
-                                <?php endforeach; endif;?>
+                                <select name="groups">
+                                  <?php foreach ($groups as $group): ?>
+                                    <option value="<?=$group['id'];?>"><?= $group['name'];?></option>
+                                  <?php endforeach;?>
+                                </select>
+                            <?php endif;?>
                         </div>
                         <?php echo  form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash());  ?>
 

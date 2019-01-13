@@ -4,14 +4,10 @@ class Lib_hari {
 
   public function __construct(){
     $this->CI =& get_instance();
-    date_default_timezone_set("Asia/Jakarta");
+    date_default_timezone_set("UTC");
     $this->hari_ini = date("Y-m-d");
   }
 
-  public function cekByDate($date){
-	$this->CI->db->where("id_hari", date("w", strtotime($date)));
-	return $this->CI->db->get("rule_hari")->result_array();
-  }
   public function cek(){
     if($this->cekHariTambahan() != null){
       return $this->cekHariTambahan();
@@ -29,6 +25,10 @@ class Lib_hari {
     $hari = date("w");
     $this->CI->db->where("id_hari", $hari);
     return $this->CI->db->get("rule_hari")->result_array();
+  }
+  public function cekByDate($date){
+  	$this->CI->db->where("id_hari", date("w", strtotime($date)));
+  	return $this->CI->db->get("rule_hari")->result_array();
   }
 }
 ?>

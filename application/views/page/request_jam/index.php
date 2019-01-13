@@ -34,6 +34,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <th>No</th>
                                             <th>Nama</th>
                                             <th>Tanggal</th>
+                                            <th>Jam Masuk</th>
+                                            <th>Request Jam Masuk</th>
+                                            <th>Jam Pulang</th>
+                                            <th>Request Jam Pulang</th>
                                             <th>Alasan</th>
                                             <th>Status</th>
                                             <th>Action</th>
@@ -47,7 +51,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <tr>
                                             <td><?= $i++?></td>
                                             <td><?= $absen['first_name'].$absen['last_name'] ;?></td>
-                                            <td><?= $absen['tanggal'] ;?></td>
+                                            <td><?= date('d F Y', strtotime($absen['tanggal'])) ;?></td>
+                                            <td><?= $absen['jam_masuk'] ;?></td>
+                                            <td><?= $absen['request_masuk'] ;?></td>
+                                            <td><?= $absen['jam_pulang'] ;?></td>
+                                            <td><?= $absen['request_pulang'] ;?></td>
                                             <td><?= $absen['alasan'] ;?></td>
                                             <td>
                                                 <?php if ($absen['status'] == 1):?>
@@ -63,7 +71,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     <!-- <button type="button" id="deactive" class="btn btn-info btn-sm btn-flat" data-toggle="modal" data-id="<?= $absen['id_request']?>" data-url="<?= base_url('Dashboard/Request_absen/approve/')?>" data-target="#exampleModal">
                                                         Approve
                                                     </button> -->
-                                                    <a class="btn btn-info btn-sm btn-flat" onclick="return confirm('Anda yakin akan menyutujui ini ? ');" href="<?= base_url('Dashboard/Request_absen/approve/'.$absen['id_request'])?>">Setuju</a>
+                                                    <a class="btn btn-info btn-sm btn-flat" onclick="return confirm('Anda yakin akan menyutujui ini ? ');" href="<?= base_url('Dashboard/Request_jam/approve/'.$absen['id_request'].'/'.$absen['id_absen'])?>">Setuju</a>
                                                 <?php else: ?>
                                                     <!-- <span class="label label-danger">Not Approved</span> -->
                                                 <?php endif; ?>

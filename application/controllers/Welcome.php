@@ -55,7 +55,7 @@ class Welcome extends CI_Controller {
             //	    $record = new Absen_model();
             //	    $record = $record->find()->order_by('jam_masuk', 'DESC')->get()->result_array();
 
-            $this->load->view('welcome_message');
+            $this->load->view('page/home');
         }
 	}
 }

@@ -15,7 +15,7 @@ class Request_jam extends CI_Controller
         $this->load->library('ion_auth');
         $this->lang->load('auth');
         $this->load->helper('language');
-        $this->load->model('Request_absen_model', 'Model');
+        $this->load->model('Request_jam_model', 'Model');
         $this->hari = $this->lib_hari->cek();
         $this->_init();
     }
@@ -30,6 +30,8 @@ class Request_jam extends CI_Controller
         $this->load->css('assets/bower_components/font-awesome/css/font-awesome.min.css');
         $this->load->css('assets/bower_components/Ionicons/css/ionicons.min.css');
         $this->load->css('assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css');
+        $this->load->css('assets/plugins/timepicker/bootstrap-timepicker.css');
+        
         //Data table
         $this->load->css('assets/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css');
         $this->load->css('assets/dist/css/AdminLTE.min.css');
@@ -39,6 +41,7 @@ class Request_jam extends CI_Controller
         $this->load->js('assets/bower_components/jquery/dist/jquery.min.js');
         $this->load->js('assets/bower_components/bootstrap/dist/js/bootstrap.min.js');
         $this->load->js('assets/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js');
+        $this->load->js('assets/plugins/timepicker/bootstrap-timepicker.js');
         //Data table
         $this->load->js('assets/bower_components/datatables.net/js/jquery.dataTables.min.js');
         $this->load->js('assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js');
@@ -64,6 +67,7 @@ class Request_jam extends CI_Controller
 			            	'users.id_user = absen.id_user'
 			            	);
             $this->data['request_jam'] = $this->db->from('request_jam_kerja,absen,users')->where('absen.id_absen = request_jam_kerja.id_absen')->where('users.id = absen.id_user')->get()->result_array();
+            
             // $this->data['fingerprint'] = $this->FingerPrint->find()->get()->result_array();
             // print_r($this->data);
             $this->load->view('page/request_jam/index', $this->data);
@@ -78,63 +82,64 @@ class Request_jam extends CI_Controller
         //Validation rule
         $this->form_validation->set_rules('id_user', '', 'required|xss_clean');
         $this->form_validation->set_rules('tanggal', 'Tanggal', 'required|xss_clean');
-
+        // ($this->input->post('jam_pulang'))
         if ($this->form_validation->run() == TRUE) {
-            $data = array(
-                'id_user' => $this->input->post('id_user'),
-                'tanggal' => date('Y-m-d' , strtotime($this->input->post('tanggal'))),
-                'alasan' => $this->input->post('alasan'),
-                'status' => 0
-            );
+            $dataWhere = array(
+                        // 'id_user' => '73',
+                        'id_user' => $this->input->post('id_user'),
+                        'tanggal' => date('Y-m-d' , strtotime($this->input->post('tanggal')))
+                );
+            $id_absen = $this->db->where($dataWhere)->get('absen')->result_array();
+            if(count($id_absen) == 1){
+                $data = array(
+                    'id_absen' => $id_absen[0]['id_absen'],
+                    'request_masuk' => $this->input->post('jam_masuk'),
+                    'request_pulang' => $this->input->post('jam_pulang'),
+                    'alasan' => $this->input->post('alasan'),
+                    'status' => 0
+                );
+                $insert = $this->Model->insert($data);
 
-            $insert = $this->Model->insert($data);
+                $this->session->set_flashdata('message', 'Success');
 
-            $this->session->set_flashdata('message', 'Success');
-
-            if($insert) redirect("Dashboard/Request_absen/add", "refresh");
-
+                if($insert) redirect("Dashboard/Request_jam/add", "refresh");
+            }else{
+                $this->session->set_flashdata('error', 'Anda belum scan pada tanggal tersebut');
+                redirect("Dashboard/Request_jam/add", "refresh");
+            }
         } else {
                 $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
         }
-        $this->data['alasan'] = $this->db->get('jenis_absen')->result_array();
-        $this->load->view('page/request_absen/add', $this->data);
+        // $this->data['alasan'] = $this->db->get('jenis_absen')->result_array();
+        $this->load->view('page/request_jam/add','refresh');
     }
 
-
-    public function approve($id){
-        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+    public function approve($id, $id_absen){
+        if (!$this->ion_auth->is_admin()) {
             redirect('auth', 'refresh');
         }
 
         $condition = array('id_request' => $id);
-
-        // $r = $this->Model->find()->where($condition);
-        // $deactive = $this->Model->update(array('status' => 1));
-        
-        $req = $this->db->where($condition)->get('request_absen')->result_array()[0];
-        // print_r($req);
-        
-        $condition2 = array(
-            'id_user' => $req['id_user'],
-            'tanggal' => $req['tanggal']
-            );
-
-        $insert = array(
-            'id_user' => $req['id_user'],
-            'tanggal' => $req['tanggal'],
-            'keterangan' => $req['keterangan']
-            );
-        $absen = $this->db->where($condition2)->get('absen')->result_array();
-        if(count($absen) == 0){
-            if($this->db->insert('absen', $insert)){
-                $this->session->set_flashdata('message', 'Success');
-            }
-        }else{
-            if($this->db->update('absen', $insert ,$condition2)){
-                $this->session->set_flashdata('message', 'Success');
+        $req = $this->db->where($condition)->get('request_jam_kerja')->result_array()[0];
+        if($req['request_masuk'] != '' && $req['request_pulang'] != ''  ){
+            $condition2 = array(
+                'jam_masuk' => $req['request_masuk'],
+                'jam_pulang' => $req['request_pulang']
+                );
+        }else if($req['request_masuk'] != '' && $req['request_pulang'] == ''){
+            $condition2 = array(
+                'jam_masuk' => $req['request_masuk']
+                );
+        }else if($req['request_masuk'] == '' && $req['request_pulang'] != ''){
+            $condition2 = array(
+                'jam_pulang' => $req['request_pulang']
+                );
+        }
+        if($this->db->where("id_absen = $id_absen")->update('absen', $condition2)){
+            $status = array('status' => '1');
+            if($this->db->where($condition)->update('request_jam_kerja', $status)){
+                redirect("Dashboard/Request_jam/index", "refresh");
             }
         }
-        // print_r($absen);
-        // if($deactive) redirect("Dashboard/Request_absen/index", "refresh");
     }
 }

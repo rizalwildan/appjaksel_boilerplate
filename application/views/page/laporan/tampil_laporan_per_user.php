@@ -22,10 +22,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="box">
                     <div class="box-header">
                         <h3 class="box-title">Laporan Per User</h3>
+                        <div class="pull-right">
+                          <?php
+                            if($this->session->userdata('group_id') == 5){
+                              $kembali = "Dashboard/Laporan/index";
+                            }elseif($this->session->userdata('group_id') == 4){
+                              $kembali = "Dashboard/Laporan/getLaporanperBagian";
+                            }else{
+                              $kembali = "Dashboard/Laporan/getLaporanAll";
+                            }
+                          ?>
+                          <a href="<?=base_url().$kembali;?>" class="btn btn-info btn-sm btn-flat">Kembali</a>
+                          <a href="#" class="btn btn-primary btn-sm btn-flat pull-right">Excel</a> 
+                          <a target="_blank" href="<?= base_url().'Dashboard/Printer/printPerUser'?>" class="btn btn-primary btn-sm btn-flat pull-right">PDF</a>
+                        </div>
                     </div>
                     <div class="box-body">
                         <div class="dataTables_wrapper form-inline dt-bootstrap">
-
                             <div class="row">
                                 <div class="col-xs-12">
                                 	<table class="table table-striped table-bordered" style="width:25%">
@@ -53,7 +66,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </tr>
                                         </thead>
                                         <tbody>
-										<?php foreach ($laporan as $row) { ?>
+										                    <?php foreach ($laporan as $row) { ?>
                                         <tr>
                                             <td><?=date('d M Y', strtotime($row['tanggal']));?></td>
                                             <td><?=$row['jam_masuk'];?></td>
@@ -61,7 +74,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <td><?=$row['jam_pulang'];?></td>
                                             <td><?=$row['pulang_awal'];?></td>
                                             <td><?=$row['lembur'];?></td>
-                                            <td>cek</td>
+                                            <td><?=$row['keterangan'];?></td>
                                         </tr>
                                         <?php } ?>
                                         </tbody>
@@ -85,10 +98,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     	<tr>
                                     		<td>Jumlah Potong</td>
                                     		<td> : </td>
-                                    		<td><?=$laporanAll['potong'];?></td>
+                                    		<td><?=$laporanAll['potong'];?> % </td>
                                     	</tr>
                                     </table>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
