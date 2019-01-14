@@ -8,7 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Time: 4:51
  */
 
-class Absen_model extends yidas\Model
-{
+// class Absen_model extends yidas\Model
+// {
 
-}
+// }
